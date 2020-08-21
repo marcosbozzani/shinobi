@@ -1,0 +1,10 @@
+{
+  "version": "",
+  "homepage": "https://github.com/marcosbozzani/shinobi",
+  "description": "Opinionated Ninja and Make files generator for C projects",
+  "license": "MIT",
+  "bin": "shinobi.ps1",
+  "url": "",
+  "hash": "",
+  "depends": ["headsup", "gcc", "ninja"]
+}

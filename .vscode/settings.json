@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.decl": "c",
+        "*.make": "makefile",
+    }
+}

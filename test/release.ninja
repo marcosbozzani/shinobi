@@ -1,0 +1,39 @@
+builddir = release
+cflags = -Isource -Irelease/declaration -O3 -s -fvisibility=hidden -fdiagnostics-color=always -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers
+
+rule headsup_c
+  command = headsup -c $out $in
+
+rule headsup_h
+  command = headsup -h $out $in
+
+rule compile
+  deps = gcc
+  depfile = $out.d
+  command = gcc -c $in -o $out $cflags -MMD -MT $out -MF $out.d
+
+rule link
+  command = gcc $in -o $out $cflags
+
+build all: phony release/app.exe
+
+build release/app.exe: link $
+  release/object/calc.o $
+  release/object/main.o
+
+build declarations: phony $
+  release/declaration/calc.c.decl $
+  release/declaration/calc.h.decl $
+  release/declaration/main.c.decl
+
+build release/object/calc.o: compile source/calc.c | declarations
+
+build release/declaration/calc.c.decl: headsup_c source/calc.c source/calc.h
+
+build release/declaration/calc.h.decl: headsup_h source/calc.c source/calc.h
+
+build release/object/main.o: compile source/main.c | declarations
+
+build release/declaration/main.c.decl: headsup_c source/main.c
+
+default all

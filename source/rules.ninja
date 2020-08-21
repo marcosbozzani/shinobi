@@ -1,0 +1,13 @@
+rule headsup_c
+  command = headsup -c $out $in
+
+rule headsup_h
+  command = headsup -h $out $in
+
+rule compile
+  deps = gcc
+  depfile = $out.d
+  command = gcc -c $in -o $out $cflags -MMD -MT $out -MF $out.d
+
+rule link
+  command = gcc $in -o $out $cflags

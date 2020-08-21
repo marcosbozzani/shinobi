@@ -1,0 +1,70 @@
+install:
+  - ps: |
+      $erroractionpreference = 'stop'
+      iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
+      scoop bucket add marcosbozzani https://github.com/marcosbozzani/scoop
+      scoop install gcc ninja headsup
+
+build_script: 
+  - ps: |
+      ./build
+      $hash = (get-filehash target/shinobi.ps1).hash
+      echo "$hash *shinobi.ps1" > target/shinobi.ps1.sha256
+
+test_script:
+  - ps: ./test
+
+artifacts:
+  - name: shinobi.ps1
+    path: target/shinobi.ps1
+  - name: shinobi.ps1.sha256
+    path: target/shinobi.ps1.sha256
+
+deploy:
+  provider: GitHub
+  artifact: shinobi.ps1, shinobi.ps1.sha256
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  description: 'Release $(APPVEYOR_REPO_TAG_NAME)'
+  on:
+    APPVEYOR_REPO_TAG: true
+  auth_token: $(auth_token)
+
+on_success:
+  - ps: |
+      $tag = ${env:APPVEYOR_REPO_TAG_NAME}
+      if ($tag) {
+        write-host "updating shinobi.json to $tag"
+        $manifest = get-content shinobi.json | convertfrom-json
+        $manifest.version = $tag.substring(1)
+        $manifest.url = "https://github.com/marcosbozzani/shinobi/releases/download/$tag/shinobi.ps1"
+        $manifest.hash = $hash
+        $manifest | convertto-json | set-content shinobi.json
+        
+        $env:GIT_REDIRECT_STDERR = '2>&1'
+        add-content "$HOME\.git-credentials" "https://$($env:auth_token):x-oauth-basic@github.com`n" -nonewline
+        git config --global credential.helper store
+        git config --global user.email "marcosbozzani@gmail.com"
+        git config --global user.name "marcosbozzani"
+        git config --global core.autocrlf true
+
+        git checkout master
+        git add shinobi.json
+        git commit -m "release($tag): update shinobi.json [skip ci]"
+        git push
+
+        git clone https://github.com/marcosbozzani/scoop.git
+        cp shinobi.json scoop/bucket
+        cd scoop
+        git add bucket/shinobi.json
+        git commit -m "feat: update shinobi.json $tag"
+        git push
+      }
+      
+version: 'build-{build}'
+
+skip_commits:
+  message: /^chore[:(]/
+
+environment:
+  auth_token:
+    secure: EjrQ/UksV/Z9ahXKENFr1gyGO778GPOyIRKvtRUZMWGxQ0SleqQDXMxfRjtqh9jd

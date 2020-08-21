@@ -1,0 +1,9 @@
+#pragma once
+
+typedef enum calc_code calc_code;
+typedef struct calc_result calc_result;
+
+calc_result calc_add(double a, double b);
+calc_result calc_sub(double a, double b);
+calc_result calc_mul(double a, double b);
+calc_result calc_div(double a, double b);
