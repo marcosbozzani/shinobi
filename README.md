@@ -26,7 +26,7 @@ This tool adopts a set of conventions:
 - all source `.c` and header `.h` files must go inside the `source` folder in the project root 
 - a source `.c` file must include its respective header `.h` file. For example: `calc.c` must `#include <calc.h>`
 - all source `.c` and header `.h` files must include a declaration `.decl` file with the same name of the file. For example: `calc.c` must `#include <calc.c.cdecl>` and `calc.h` must `#include <calc.h.cdecl>`
-- for every added or edited file inside `source` folder the `shinobi` command must be executed to update the project dependecies and declaration files
+- for every added file inside `source` folder the `shinobi` command must be executed to update the project dependecies and declaration files
 
 Following those conventions and using `shinobi` gives you:
 - automatic `ninja` or `make` dependencies listing, so you don't have to add new source files manually or write all the included files for a source for the build system
