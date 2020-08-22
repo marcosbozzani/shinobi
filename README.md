@@ -41,12 +41,13 @@ Following those conventions and using `shinobi` gives you:
 - create a `source` folder
 - create your source `.c` and header `.h` files inside the `source` folder
 - `shinobi [-builder (ninja|make)]`
-- options:
-  - `-b|-build` : choose the builder (ninja or make) [default: ninja]
-- examples: 
-  - `shinobi`
-  - `shinobi -b make`
-  - `shinobi -builder ninja`
+  - options:
+    - `-b|-build` : choose the builder (ninja or make) [default: ninja]
+  - examples: 
+    - `shinobi`
+    - `shinobi -b make`
+    - `shinobi -builder ninja`
+- run `ninja -f target.ninja` or `make -f target.make`
 
 # Configuration file (build.config)
 
